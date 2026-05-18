@@ -5,16 +5,17 @@ import '../../../data/models/product.dart';
 import '../../../data/repositories/product_repository.dart';
 import 'home_state.dart';
 
+const _fashionCategories = {'jewelery', "men's clothing", "women's clothing"};
+
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this._repository) : super(const HomeInitial());
 
   final ProductRepository _repository;
-
-  /// Fake Store POST does not add items to GET /products; we merge locally.
   final List<Product> _sessionInserted = [];
-
-  /// Raw API list for the current view (before merging session inserts).
   List<Product> _cachedApiProducts = [];
+
+  List<Product> _fashionOnly(List<Product> products) =>
+      products.where((p) => _fashionCategories.contains(p.category)).toList();
 
   List<Product> _merged(List<Product> apiSlice, String? selectedCategory) {
     final sessionPart = selectedCategory == null || selectedCategory.isEmpty
@@ -34,9 +35,13 @@ class HomeCubit extends Cubit<HomeState> {
       final categories = await _repository.fetchCategories();
       final products = await _repository.fetchProducts();
       _cachedApiProducts = products;
+
+      final fashionCategories =
+          categories.where((c) => _fashionCategories.contains(c)).toList();
+
       emit(HomeLoaded(
-        products: _merged(products, null),
-        categories: categories,
+        products: _merged(_fashionOnly(products), null),
+        categories: fashionCategories,
         selectedCategory: null,
       ));
     } on AppException catch (e) {
@@ -56,7 +61,7 @@ class HomeCubit extends Cubit<HomeState> {
         final products = await _repository.fetchProducts();
         _cachedApiProducts = products;
         emit(HomeLoaded(
-          products: _merged(products, null),
+          products: _merged(_fashionOnly(products), null),
           categories: current.categories,
           selectedCategory: null,
         ));
@@ -84,8 +89,9 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  /// Call after a successful POST so the item appears despite API not listing it.
   void registerInsertedProduct(Product product) {
+    if (!_fashionCategories.contains(product.category)) return;
+
     if (!_sessionInserted.any((e) => e.id == product.id)) {
       _sessionInserted.insert(0, product);
     }

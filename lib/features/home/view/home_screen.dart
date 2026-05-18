@@ -53,162 +53,137 @@ class _HomeBodyState extends State<_HomeBody> {
           return CustomScrollView(
             slivers: [
               // ── App Bar ──────────────────────────────────────────────
-              SliverAppBar(
-                floating: true,
-                snap: true,
-                backgroundColor: const Color(0xFFFAF9F7),
-                elevation: 0,
-                scrolledUnderElevation: 0,
-                expandedHeight: 120,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'VOGUE SHOP',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 3,
-                                    color: Color(0xFF0F0F0F),
-                                  ),
-                                ),
-                                Text(
-                                  'Temukan koleksi terbaikmu',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Cart button
-                          BlocBuilder<CartCubit, CartState>(
-                            builder: (context, cartState) {
-                              final count = cartState.lines.fold<int>(
-                                0, (s, l) => s + l.quantity);
-                              return GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                    context, AppRoutes.cart),
-                                child: Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF0F0F0F),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.shopping_bag_outlined,
-                                        color: Colors.white,
-                                        size: 22,
-                                      ),
-                                      if (count > 0)
-                                        Positioned(
-                                          top: 6,
-                                          right: 6,
-                                          child: Container(
-                                            width: 14,
-                                            height: 14,
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFFC9A84C),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                '$count',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.w800,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 8),
-                          // Add product
-                          GestureDetector(
-                            onTap: () async {
-                              final created =
-                                  await Navigator.pushNamed<Product?>(
-                                context,
-                                AppRoutes.insertProduct,
-                              );
-                              if (!context.mounted) return;
-                              if (created != null) {
-                                context
-                                    .read<HomeCubit>()
-                                    .registerInsertedProduct(created);
-                              }
-                            },
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                    color: const Color(0xFFE8E8E8)),
-                              ),
-                              child: const Icon(Icons.add_rounded,
-                                  color: Color(0xFF0F0F0F), size: 22),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(52),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+SliverAppBar(
+  floating: true,
+  snap: true,
+  backgroundColor: const Color(0xFFFAF9F7),
+  elevation: 0,
+  scrolledUnderElevation: 0,
+  toolbarHeight: 60,
+  title: const Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        'VOGUE SHOP',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 3,
+          color: Color(0xFF0F0F0F),
+        ),
+      ),
+      Text(
+        'Temukan koleksi terbaikmu',
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey,
+        ),
+      ),
+    ],
+  ),
+  actions: [
+    // Cart button
+    BlocBuilder<CartCubit, CartState>(
+      builder: (context, cartState) {
+        final count = cartState.lines.fold<int>(0, (s, l) => s + l.quantity);
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, AppRoutes.cart),
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F0F0F),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+                if (count > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
                     child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE8E8E8)),
+                      width: 14,
+                      height: 14,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFC9A84C),
+                        shape: BoxShape.circle,
                       ),
-                      child: TextField(
-                        controller: _searchCtrl,
-                        onChanged: (v) =>
-                            setState(() => _searchQuery = v.toLowerCase()),
-                        decoration: InputDecoration(
-                          hintText: 'Cari produk fashion...',
-                          hintStyle: TextStyle(
-                              color: Colors.grey[400], fontSize: 14),
-                          prefixIcon: Icon(Icons.search_rounded,
-                              color: Colors.grey[400], size: 20),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 12),
-                          isDense: true,
+                      child: Center(
+                        child: Text(
+                          '$count',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+    const SizedBox(width: 8),
+    // Add product button
+    GestureDetector(
+      onTap: () async {
+        final created = await Navigator.pushNamed<Product?>(
+          context,
+          AppRoutes.insertProduct,
+        );
+        if (!context.mounted) return;
+        if (created != null) {
+          context.read<HomeCubit>().registerInsertedProduct(created);
+        }
+      },
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE8E8E8)),
+        ),
+        child: const Icon(Icons.add_rounded, color: Color(0xFF0F0F0F), size: 22),
+      ),
+    ),
+    const SizedBox(width: 16),
+  ],
+  bottom: PreferredSize(
+    preferredSize: const Size.fromHeight(52),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: Container(
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE8E8E8)),
+        ),
+        child: TextField(
+          controller: _searchCtrl,
+          onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+          decoration: InputDecoration(
+            hintText: 'Cari produk fashion...',
+            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            prefixIcon: Icon(Icons.search_rounded, color: Colors.grey[400], size: 20),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            isDense: true,
+          ),
+        ),
+      ),
+    ),
+  ),
+),
 
               // ── Body ─────────────────────────────────────────────────
               if (state is HomeInitial || state is HomeLoading)

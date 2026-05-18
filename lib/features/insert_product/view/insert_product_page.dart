@@ -5,6 +5,8 @@ import '../../../data/repositories/product_repository.dart';
 import '../viewmodel/insert_product_cubit.dart';
 import '../viewmodel/insert_product_state.dart';
 
+const _fashionCategories = {'jewelery', "men's clothing", "women's clothing"};
+
 class InsertProductPage extends StatefulWidget {
   const InsertProductPage({super.key});
 
@@ -62,7 +64,9 @@ class _InsertProductPageState extends State<InsertProductPage> {
         builder: (context, state) {
           final submitting = state is InsertProductSubmitting;
           return FutureBuilder<List<String>>(
-            future: context.read<ProductRepository>().fetchCategories(),
+            future: context.read<ProductRepository>().fetchCategories().then(
+  (cats) => cats.where((c) => _fashionCategories.contains(c)).toList(),
+),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
