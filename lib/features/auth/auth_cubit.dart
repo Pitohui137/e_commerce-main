@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 import '../../../core/errors/app_exception.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -13,22 +13,24 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   final AuthRepository _repository;
-  StreamSubscription<AuthState>? _sub;
+  StreamSubscription<dynamic>? _authSub;
 
   void _init() {
-    // Check current session first
-    if (_repository.isLoggedIn) {
-      emit(AuthAuthenticated(_repository.currentUser!));
+    final user = _repository.currentUser;
+    if (user != null) {
+      emit(AuthAuthenticated(user));
     } else {
       emit(const AuthUnauthenticated());
     }
 
-    // Listen to auth changes (token refresh, sign-out from other tab, etc.)
-    _sub = _repository.authStateChanges.map((event) {
-      final user = event.session?.user;
-      if (user != null) return AuthAuthenticated(user);
-      return const AuthUnauthenticated();
-    }).listen(emit);
+    _authSub = _repository.authStateChanges.listen((event) {
+      final u = event.session?.user;
+      if (u != null) {
+        emit(AuthAuthenticated(u));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
+    });
   }
 
   Future<void> signIn({
@@ -64,7 +66,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   @override
   Future<void> close() {
-    _sub?.cancel();
+    _authSub?.cancel();
     return super.close();
   }
 }

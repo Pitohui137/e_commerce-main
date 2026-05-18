@@ -5,20 +5,35 @@ import '../../../app/app_router.dart';
 import '../../../core/widgets/async_error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../data/models/product.dart';
+import '../../../data/repositories/product_repository.dart';
 import '../../cart/viewmodel/cart_cubit.dart';
 import '../../cart/viewmodel/cart_state.dart';
 import '../viewmodel/home_cubit.dart';
 import '../viewmodel/home_state.dart';
 import 'product_card.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) {
+    // Provide HomeCubit scoped to this tab
+    return BlocProvider(
+      create: (ctx) =>
+          HomeCubit(ctx.read<ProductRepository>())..load(),
+      child: const _HomeBody(),
+    );
+  }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeBody extends StatefulWidget {
+  const _HomeBody();
+
+  @override
+  State<_HomeBody> createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<_HomeBody> {
   final _searchCtrl = TextEditingController();
   String _searchQuery = '';
 
@@ -32,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: const Color(0xFFFAF9F7),
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return CustomScrollView(
@@ -41,194 +56,155 @@ class _HomeScreenState extends State<HomeScreen> {
               SliverAppBar(
                 floating: true,
                 snap: true,
-                backgroundColor: const Color(0xFFF8F9FA),
+                backgroundColor: const Color(0xFFFAF9F7),
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                expandedHeight: 130,
+                expandedHeight: 120,
                 flexibleSpace: FlexibleSpaceBar(
                   background: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Discover',
-                                      style: theme.textTheme.headlineSmall
-                                          ?.copyWith(
-                                        fontWeight: FontWeight.w900,
-                                        color: const Color(0xFF1A1A1A),
-                                        letterSpacing: -0.5,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Find what you love',
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                        color: Colors.grey[500],
-                                      ),
-                                    ),
-                                  ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'VOGUE SHOP',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 3,
+                                    color: Color(0xFF0F0F0F),
+                                  ),
                                 ),
-                              ),
-                              // Cart button
-                              BlocBuilder<CartCubit, CartState>(
-                                builder: (context, cartState) {
-                                  final count = cartState.lines.fold<int>(
-                                    0,
-                                    (s, line) => s + line.quantity,
-                                  );
-                                  return GestureDetector(
-                                    onTap: () => Navigator.pushNamed(
-                                        context, AppRoutes.cart),
-                                    child: Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.primary,
-                                        borderRadius: BorderRadius.circular(14),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: theme.colorScheme.primary
-                                                .withValues(alpha: 0.35),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
+                                Text(
+                                  'Temukan koleksi terbaikmu',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Cart button
+                          BlocBuilder<CartCubit, CartState>(
+                            builder: (context, cartState) {
+                              final count = cartState.lines.fold<int>(
+                                0, (s, l) => s + l.quantity);
+                              return GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, AppRoutes.cart),
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0F0F0F),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Colors.white,
+                                        size: 22,
                                       ),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.shopping_bag_outlined,
-                                            color: Colors.white,
-                                            size: 22,
-                                          ),
-                                          if (count > 0)
-                                            Positioned(
-                                              top: 6,
-                                              right: 6,
-                                              child: Container(
-                                                width: 14,
-                                                height: 14,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xFFFF4757),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    '$count',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 9,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                    ),
-                                                  ),
+                                      if (count > 0)
+                                        Positioned(
+                                          top: 6,
+                                          right: 6,
+                                          child: Container(
+                                            width: 14,
+                                            height: 14,
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFC9A84C),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '$count',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w800,
                                                 ),
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          // Add product
+                          GestureDetector(
+                            onTap: () async {
+                              final created =
+                                  await Navigator.pushNamed<Product?>(
+                                context,
+                                AppRoutes.insertProduct,
+                              );
+                              if (!context.mounted) return;
+                              if (created != null) {
+                                context
+                                    .read<HomeCubit>()
+                                    .registerInsertedProduct(created);
+                              }
+                            },
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                    color: const Color(0xFFE8E8E8)),
                               ),
-                            ],
+                              child: const Icon(Icons.add_rounded,
+                                  color: Color(0xFF0F0F0F), size: 22),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                // Search bar pinned below header
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(52),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.05),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              controller: _searchCtrl,
-                              onChanged: (v) =>
-                                  setState(() => _searchQuery = v.toLowerCase()),
-                              decoration: InputDecoration(
-                                hintText: 'Search products...',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[400],
-                                  fontSize: 14,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.search_rounded,
-                                  color: Colors.grey[400],
-                                  size: 20,
-                                ),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                isDense: true,
-                              ),
-                            ),
-                          ),
+                    child: Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFE8E8E8)),
+                      ),
+                      child: TextField(
+                        controller: _searchCtrl,
+                        onChanged: (v) =>
+                            setState(() => _searchQuery = v.toLowerCase()),
+                        decoration: InputDecoration(
+                          hintText: 'Cari produk fashion...',
+                          hintStyle: TextStyle(
+                              color: Colors.grey[400], fontSize: 14),
+                          prefixIcon: Icon(Icons.search_rounded,
+                              color: Colors.grey[400], size: 20),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 12),
+                          isDense: true,
                         ),
-                        const SizedBox(width: 10),
-                        // Add product button
-                        GestureDetector(
-                          onTap: () async {
-                            final created =
-                                await Navigator.pushNamed<Product?>(
-                              context,
-                              AppRoutes.insertProduct,
-                            );
-                            if (!context.mounted) return;
-                            if (created != null) {
-                              context
-                                  .read<HomeCubit>()
-                                  .registerInsertedProduct(created);
-                            }
-                          },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.05),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.add_rounded,
-                              color: theme.colorScheme.primary,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -245,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               else if (state is HomeLoaded) ...[
-                // Category chips
                 SliverToBoxAdapter(
                   child: _CategoryChips(
                     categories: state.categories,
@@ -254,16 +229,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         context.read<HomeCubit>().selectCategory(c),
                   ),
                 ),
-
-                // Product grid
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
                   sliver: _ProductGrid(
                     products: state.products
                         .where((p) => _searchQuery.isEmpty ||
-                            p.title
-                                .toLowerCase()
-                                .contains(_searchQuery))
+                            p.title.toLowerCase().contains(_searchQuery))
                         .toList(),
                   ),
                 ),
@@ -289,16 +260,12 @@ class _CategoryChips extends StatelessWidget {
   final String? selected;
   final void Function(String?) onSelect;
 
-  String _capitalize(String s) {
-    if (s.isEmpty) return s;
-    return s[0].toUpperCase() + s.substring(1);
-  }
+  String _cap(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final all = [null, ...categories];
-
     return SizedBox(
       height: 44,
       child: ListView.separated(
@@ -309,34 +276,29 @@ class _CategoryChips extends StatelessWidget {
         itemBuilder: (context, i) {
           final cat = all[i];
           final isSelected = cat == selected;
-          final label = cat == null ? 'All' : _capitalize(cat);
-
+          final label = cat == null ? 'Semua' : _cap(cat);
           return GestureDetector(
             onTap: () => onSelect(cat),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              duration: const Duration(milliseconds: 180),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? theme.colorScheme.primary
+                    ? const Color(0xFF0F0F0F)
                     : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: isSelected
-                        ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                        : Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isSelected
+                      ? const Color(0xFF0F0F0F)
+                      : const Color(0xFFE8E8E8),
+                ),
               ),
               child: Text(
                 label,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected ? Colors.white : Colors.grey[600],
                 ),
               ),
@@ -368,7 +330,7 @@ class _ProductGrid extends StatelessWidget {
                     size: 56, color: Colors.grey[300]),
                 const SizedBox(height: 12),
                 Text(
-                  'No products found',
+                  'Produk tidak ditemukan',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -396,13 +358,7 @@ class _ProductGrid extends StatelessWidget {
             onAddToCart: () {
               context.read<CartCubit>().addProduct(product);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Added to cart'),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                const SnackBar(content: Text('Ditambahkan ke keranjang')),
               );
             },
           );

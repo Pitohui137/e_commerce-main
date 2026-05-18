@@ -14,16 +14,18 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabCtrl;
-  final _loginEmailCtrl = TextEditingController();
-  final _loginPassCtrl = TextEditingController();
-  final _regEmailCtrl = TextEditingController();
-  final _regPassCtrl = TextEditingController();
-  final _regConfirmCtrl = TextEditingController();
-  final _loginFormKey = GlobalKey<FormState>();
-  final _regFormKey = GlobalKey<FormState>();
-  bool _obscureLogin = true;
-  bool _obscureReg = true;
-  bool _obscureConfirm = true;
+
+  final _loginEmail = TextEditingController();
+  final _loginPass = TextEditingController();
+  final _loginKey = GlobalKey<FormState>();
+  bool _loginObscure = true;
+
+  final _regEmail = TextEditingController();
+  final _regPass = TextEditingController();
+  final _regConfirm = TextEditingController();
+  final _regKey = GlobalKey<FormState>();
+  bool _regObscure = true;
+  bool _regConfirmObscure = true;
 
   @override
   void initState() {
@@ -34,297 +36,354 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     _tabCtrl.dispose();
-    _loginEmailCtrl.dispose();
-    _loginPassCtrl.dispose();
-    _regEmailCtrl.dispose();
-    _regPassCtrl.dispose();
-    _regConfirmCtrl.dispose();
+    _loginEmail.dispose();
+    _loginPass.dispose();
+    _regEmail.dispose();
+    _regPass.dispose();
+    _regConfirm.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: theme.colorScheme.error,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          final loading = state is AuthLoading;
-          return SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Logo / Header
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.35),
-                              blurRadius: 20,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.shopping_bag_outlined,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Shop',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Masuk atau buat akun baru',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[500],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // Tab bar
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: TabBar(
-                          controller: _tabCtrl,
-                          indicator: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorPadding: const EdgeInsets.all(4),
-                          labelColor: Colors.white,
-                          unselectedLabelColor: Colors.grey[500],
-                          labelStyle: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                          dividerColor: Colors.transparent,
-                          tabs: const [
-                            Tab(text: 'Masuk'),
-                            Tab(text: 'Daftar'),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Tab views
-                      SizedBox(
-                        height: 320,
-                        child: TabBarView(
-                          controller: _tabCtrl,
-                          children: [
-                            _buildLoginForm(loading),
-                            _buildRegisterForm(loading),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: const Color(0xFFD32F2F),
             ),
           );
-        },
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0F0F0F),
+        body: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            final loading = state is AuthLoading;
+            return SafeArea(
+              child: Column(
+                children: [
+                  // Brand header
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: const Color(0xFFC9A84C), width: 1.5),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(Icons.diamond_outlined,
+                                color: Color(0xFFC9A84C), size: 28),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'VOGUE SHOP',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 6,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Luxury fashion at your fingertips',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.45),
+                              fontSize: 13,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Form card
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFAF9F7),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(28)),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Tab switcher
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEEEDE9),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: TabBar(
+                                controller: _tabCtrl,
+                                indicator: BoxDecoration(
+                                  color: const Color(0xFF0F0F0F),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicatorPadding: const EdgeInsets.all(3),
+                                labelColor: Colors.white,
+                                unselectedLabelColor: const Color(0xFF888888),
+                                labelStyle: const TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 14),
+                                dividerColor: Colors.transparent,
+                                tabs: const [
+                                  Tab(text: 'Masuk'),
+                                  Tab(text: 'Daftar'),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+
+                            SizedBox(
+                              height: 290,
+                              child: TabBarView(
+                                controller: _tabCtrl,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  // ── Login ──
+                                  Form(
+                                    key: _loginKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        _AuthField(
+                                          controller: _loginEmail,
+                                          label: 'Email',
+                                          icon: Icons.alternate_email_rounded,
+                                          type: TextInputType.emailAddress,
+                                          validator: (v) {
+                                            if (v == null ||
+                                                v.trim().isEmpty) {
+                                              return 'Masukkan email';
+                                            }
+                                            if (!v.contains('@')) {
+                                              return 'Email tidak valid';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 14),
+                                        _AuthField(
+                                          controller: _loginPass,
+                                          label: 'Password',
+                                          icon: Icons.lock_outline_rounded,
+                                          obscure: _loginObscure,
+                                          onToggle: () => setState(() =>
+                                              _loginObscure = !_loginObscure),
+                                          action: TextInputAction.done,
+                                          validator: (v) {
+                                            if (v == null || v.isEmpty) {
+                                              return 'Masukkan password';
+                                            }
+                                            if (v.length < 6) {
+                                              return 'Minimal 6 karakter';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 24),
+                                        _SubmitBtn(
+                                          loading: loading,
+                                          label: 'Masuk',
+                                          onPressed: () {
+                                            if (_loginKey.currentState!
+                                                .validate()) {
+                                              context.read<AuthCubit>().signIn(
+                                                    email: _loginEmail.text
+                                                        .trim(),
+                                                    password: _loginPass.text,
+                                                  );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // ── Register ──
+                                  Form(
+                                    key: _regKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        _AuthField(
+                                          controller: _regEmail,
+                                          label: 'Email',
+                                          icon: Icons.alternate_email_rounded,
+                                          type: TextInputType.emailAddress,
+                                          validator: (v) {
+                                            if (v == null ||
+                                                v.trim().isEmpty) {
+                                              return 'Masukkan email';
+                                            }
+                                            if (!v.contains('@')) {
+                                              return 'Email tidak valid';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _AuthField(
+                                          controller: _regPass,
+                                          label: 'Password',
+                                          icon: Icons.lock_outline_rounded,
+                                          obscure: _regObscure,
+                                          onToggle: () => setState(
+                                              () => _regObscure = !_regObscure),
+                                          validator: (v) {
+                                            if (v == null || v.isEmpty) {
+                                              return 'Masukkan password';
+                                            }
+                                            if (v.length < 6) {
+                                              return 'Minimal 6 karakter';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _AuthField(
+                                          controller: _regConfirm,
+                                          label: 'Konfirmasi Password',
+                                          icon: Icons.lock_outline_rounded,
+                                          obscure: _regConfirmObscure,
+                                          onToggle: () => setState(() =>
+                                              _regConfirmObscure =
+                                                  !_regConfirmObscure),
+                                          action: TextInputAction.done,
+                                          validator: (v) {
+                                            if (v != _regPass.text) {
+                                              return 'Password tidak cocok';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 20),
+                                        _SubmitBtn(
+                                          loading: loading,
+                                          label: 'Buat Akun',
+                                          onPressed: () {
+                                            if (_regKey.currentState!
+                                                .validate()) {
+                                              context.read<AuthCubit>().signUp(
+                                                    email:
+                                                        _regEmail.text.trim(),
+                                                    password: _regPass.text,
+                                                  );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
+}
 
-  Widget _buildLoginForm(bool loading) {
-    return Form(
-      key: _loginFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            controller: _loginEmailCtrl,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
-            ),
-            validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Masukkan email';
-              if (!v.contains('@')) return 'Email tidak valid';
-              return null;
-            },
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _loginPassCtrl,
-            obscureText: _obscureLogin,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
+class _AuthField extends StatelessWidget {
+  const _AuthField({
+    required this.controller,
+    required this.label,
+    required this.icon,
+    this.type = TextInputType.text,
+    this.action = TextInputAction.next,
+    this.obscure = false,
+    this.onToggle,
+    this.validator,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final IconData icon;
+  final TextInputType type;
+  final TextInputAction action;
+  final bool obscure;
+  final VoidCallback? onToggle;
+  final String? Function(String?)? validator;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: type,
+      textInputAction: action,
+      obscureText: obscure,
+      validator: validator,
+      style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A1A)),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, size: 18, color: const Color(0xFF888888)),
+        suffixIcon: onToggle != null
+            ? IconButton(
                 icon: Icon(
-                  _obscureLogin ? Icons.visibility_off : Icons.visibility,
+                  obscure
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  size: 18,
+                  color: const Color(0xFF888888),
                 ),
-                onPressed: () =>
-                    setState(() => _obscureLogin = !_obscureLogin),
-              ),
-            ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Masukkan password';
-              if (v.length < 6) return 'Minimal 6 karakter';
-              return null;
-            },
-          ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: loading
-                ? null
-                : () {
-                    if (_loginFormKey.currentState!.validate()) {
-                      context.read<AuthCubit>().signIn(
-                            email: _loginEmailCtrl.text,
-                            password: _loginPassCtrl.text,
-                          );
-                    }
-                  },
-            child: loading
-                ? const SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text('Masuk'),
-          ),
-        ],
+                onPressed: onToggle,
+              )
+            : null,
       ),
     );
   }
+}
 
-  Widget _buildRegisterForm(bool loading) {
-    return Form(
-      key: _regFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            controller: _regEmailCtrl,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
-            ),
-            validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Masukkan email';
-              if (!v.contains('@')) return 'Email tidak valid';
-              return null;
-            },
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _regPassCtrl,
-            obscureText: _obscureReg,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureReg ? Icons.visibility_off : Icons.visibility,
-                ),
-                onPressed: () => setState(() => _obscureReg = !_obscureReg),
-              ),
-            ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Masukkan password';
-              if (v.length < 6) return 'Minimal 6 karakter';
-              return null;
-            },
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _regConfirmCtrl,
-            obscureText: _obscureConfirm,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              labelText: 'Konfirmasi Password',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                ),
-                onPressed: () =>
-                    setState(() => _obscureConfirm = !_obscureConfirm),
-              ),
-            ),
-            validator: (v) {
-              if (v != _regPassCtrl.text) return 'Password tidak cocok';
-              return null;
-            },
-          ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: loading
-                ? null
-                : () {
-                    if (_regFormKey.currentState!.validate()) {
-                      context.read<AuthCubit>().signUp(
-                            email: _regEmailCtrl.text,
-                            password: _regPassCtrl.text,
-                          );
-                    }
-                  },
-            child: loading
-                ? const SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text('Daftar'),
-          ),
-        ],
-      ),
+class _SubmitBtn extends StatelessWidget {
+  const _SubmitBtn({
+    required this.loading,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final bool loading;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: loading ? null : onPressed,
+      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+      child: loading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: Colors.white),
+            )
+          : Text(label),
     );
   }
 }

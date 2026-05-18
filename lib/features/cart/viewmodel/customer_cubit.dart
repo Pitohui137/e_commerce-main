@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../data/models/customer.dart';
 import '../../../data/repositories/customer_repository.dart';
 import 'customer_state.dart';
 
@@ -31,11 +32,7 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(CustomerActionLoading(current));
     try {
       final customer = await _repository.create(
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-      );
+          name: name, email: email, phone: phone, address: address);
       emit(CustomerLoaded([customer, ...current]));
       return true;
     } on AppException catch (e) {
@@ -58,15 +55,9 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(CustomerActionLoading(current));
     try {
       final updated = await _repository.update(
-        id: id,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-      );
-      final list =
-          current.map((c) => c.id == id ? updated : c).toList();
-      emit(CustomerLoaded(list));
+          id: id, name: name, email: email, phone: phone, address: address);
+      emit(CustomerLoaded(
+          current.map((c) => c.id == id ? updated : c).toList()));
       return true;
     } on AppException catch (e) {
       emit(CustomerError(e.message));
@@ -82,8 +73,7 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(CustomerActionLoading(current));
     try {
       await _repository.delete(id);
-      final list = current.where((c) => c.id != id).toList();
-      emit(CustomerLoaded(list));
+      emit(CustomerLoaded(current.where((c) => c.id != id).toList()));
       return true;
     } on AppException catch (e) {
       emit(CustomerError(e.message));
@@ -94,7 +84,7 @@ class CustomerCubit extends Cubit<CustomerState> {
     }
   }
 
-  List get _currentList {
+  List<Customer> get _currentList {
     final s = state;
     if (s is CustomerLoaded) return s.customers;
     if (s is CustomerActionLoading) return s.customers;

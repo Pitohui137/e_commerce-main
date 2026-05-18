@@ -1,4 +1,3 @@
-// auth_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,7 +21,7 @@ class AuthAuthenticated extends AuthState {
   final User user;
 
   @override
-  List<Object?> get props => [user.id];
+  List<Object?> get props => [user.id, user.email];
 }
 
 class AuthUnauthenticated extends AuthState {
