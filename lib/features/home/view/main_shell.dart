@@ -8,6 +8,7 @@ import './profile_screen.dart';
 import '../viewmodel/home_cubit.dart';
 import '../../jual/view/jual_screen.dart';
 import '../../jual/viewmodel/jual_cubit.dart';
+import '../../../data/repositories/product_repository.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -18,15 +19,31 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _tab = 0;
+  late HomeCubit _homeCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeCubit = HomeCubit(context.read<ProductRepository>())..load();
+  }
+
+  @override
+  void dispose() {
+    _homeCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => JualCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _homeCubit),
+        BlocProvider(create: (_) => JualCubit()),
+      ],
       child: Builder(
         builder: (context) {
           final screens = [
-            const HomeScreen(),
+            const _HomeTab(),
             const JualScreen(),
             _ProfileTab(),
           ];
@@ -62,6 +79,16 @@ class _MainShellState extends State<MainShell> {
         },
       ),
     );
+  }
+}
+
+/// Wrapper untuk HomeScreen tanpa membuat HomeCubit baru
+class _HomeTab extends StatelessWidget {
+  const _HomeTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return const HomeScreen();
   }
 }
 
