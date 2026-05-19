@@ -3,20 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/app_router.dart';
-import '../../../data/models/product.dart';
-import '../../../data/repositories/product_repository.dart';
-import '../../../features/home/viewmodel/home_cubit.dart';
+import '../../../core/widgets/async_error_view.dart';
+import '../../../core/widgets/loading_view.dart';
+import '../../../data/models/user_product.dart';
+import '../../home/view/home_cubit.dart';
 import '../viewmodel/jual_cubit.dart';
 import '../viewmodel/jual_state.dart';
 
-class JualScreen extends StatelessWidget {
+class JualScreen extends StatefulWidget {
   const JualScreen({super.key});
+
+  @override
+  State<JualScreen> createState() => _JualScreenState();
+}
+
+class _JualScreenState extends State<JualScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<JualCubit>().load();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<JualCubit, JualState>(
       builder: (context, state) {
-        final products = (state as JualLoaded).products;
         return Scaffold(
           backgroundColor: const Color(0xFFFAF9F7),
           appBar: AppBar(
@@ -36,7 +47,9 @@ class JualScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: FilledButton.icon(
-                  onPressed: () => _addProduct(context),
+                  onPressed: state is JualActionLoading
+                      ? null
+                      : () => _addProduct(context),
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Jual'),
                   style: FilledButton.styleFrom(
@@ -53,38 +66,53 @@ class JualScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: products.isEmpty
-              ? _EmptyState(onTap: () => _addProduct(context))
-              : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                  itemCount: products.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, i) => _ProductTile(
-                    product: products[i],
-                    onDelete: () =>
-                        context.read<JualCubit>().removeProduct(products[i].id),
-                  ),
-                ),
+          body: switch (state) {
+            JualInitial() || JualLoading() => const LoadingView(),
+            JualError(:final message) => AsyncErrorView(
+                message: message,
+                onRetry: () => context.read<JualCubit>().load(),
+              ),
+            JualLoaded(:final products) ||
+            JualActionLoading(:final products) =>
+              products.isEmpty
+                  ? _EmptyState(
+                      onTap: state is JualActionLoading
+                          ? null
+                          : () => _addProduct(context),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                      itemCount: products.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, i) => _ProductTile(
+                        product: products[i],
+                        onDelete: state is JualActionLoading
+                            ? null
+                            : () => context
+                                .read<JualCubit>()
+                                .deleteProduct(products[i]),
+                      ),
+                    ),
+          },
         );
       },
     );
   }
 
   Future<void> _addProduct(BuildContext context) async {
-    final created = await Navigator.pushNamed<Product?>(
-      context,
-      AppRoutes.insertProduct,
-    );
+    final created = await Navigator.of(context, rootNavigator: true)
+        .pushNamed<UserProduct?>(AppRoutes.insertProduct);
     if (!context.mounted || created == null) return;
-    context.read<JualCubit>().addProduct(created);
-    // Juga daftarkan ke home supaya muncul di tab Produk
-    context.read<HomeCubit>().registerInsertedProduct(created);
+    context.read<JualCubit>().prependProduct(created);
+    context
+        .read<HomeCubit>()
+        .registerInsertedProduct(created.toDisplayProduct());
   }
 }
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.onTap});
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +163,8 @@ class _EmptyState extends StatelessWidget {
 
 class _ProductTile extends StatelessWidget {
   const _ProductTile({required this.product, required this.onDelete});
-  final Product product;
-  final VoidCallback onDelete;
+  final UserProduct product;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +195,7 @@ class _ProductTile extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(6),
                     child: CachedNetworkImage(
-                      imageUrl: product.image,
+                      imageUrl: product.imageUrl,
                       fit: BoxFit.contain,
                       errorWidget: (_, __, ___) => const Icon(
                           Icons.image_not_supported_outlined,

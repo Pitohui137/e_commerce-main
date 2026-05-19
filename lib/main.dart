@@ -7,7 +7,9 @@ import 'data/repositories/auth_repository.dart';
 import 'data/repositories/cart_repository.dart';
 import 'data/repositories/customer_repository.dart';
 import 'data/repositories/product_repository.dart';
+import 'data/repositories/user_product_repository.dart';
 import 'data/services/fake_store_api_client.dart';
+import 'data/services/image_picker_service.dart';
 import 'data/services/supabase_constants.dart';
 
 Future<void> main() async {
@@ -29,6 +31,8 @@ Future<void> main() async {
       cartRepository: CartRepository(prefs),
       authRepository: AuthRepository(supabase),
       customerRepository: CustomerRepository(supabase),
+      userProductRepository: UserProductRepository(supabase),
+      imagePickerService: ImagePickerService(supabase),
     ),
   );
 }

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/product.dart';
+import '../../../data/models/user_product.dart';
 
 sealed class InsertProductState extends Equatable {
   const InsertProductState();
@@ -20,7 +20,7 @@ class InsertProductSubmitting extends InsertProductState {
 class InsertProductSuccess extends InsertProductState {
   const InsertProductSuccess(this.product);
 
-  final Product product;
+  final UserProduct product;
 
   @override
   List<Object?> get props => [product];

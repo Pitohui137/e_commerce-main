@@ -5,9 +5,10 @@ import '../../../app/app_router.dart';
 import '../../../core/widgets/async_error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../data/models/product.dart';
+import '../../../data/models/user_product.dart';
 import '../../cart/viewmodel/cart_cubit.dart';
 import '../../cart/viewmodel/cart_state.dart';
-import '../viewmodel/home_cubit.dart';
+import 'home_cubit.dart';
 import '../viewmodel/home_state.dart';
 import 'product_card.dart';
 
@@ -137,13 +138,16 @@ class _HomeBodyState extends State<_HomeBody> {
                   // Add product button
                   GestureDetector(
                     onTap: () async {
-                      final created = await Navigator.pushNamed<Product?>(
-                        context,
+                      final created =
+                          await Navigator.of(context, rootNavigator: true)
+                              .pushNamed<UserProduct?>(
                         AppRoutes.insertProduct,
                       );
                       if (!context.mounted) return;
                       if (created != null) {
-                        context.read<HomeCubit>().registerInsertedProduct(created);
+                        context.read<HomeCubit>().registerInsertedProduct(
+                              created.toDisplayProduct(),
+                            );
                       }
                     },
                     child: Container(

@@ -5,10 +5,12 @@ import '../../auth/viewmodel/auth_cubit.dart';
 import '../../auth/viewmodel/auth_state.dart';
 import './home_screen.dart';
 import './profile_screen.dart';
-import '../viewmodel/home_cubit.dart';
+import 'home_cubit.dart';
 import '../../jual/view/jual_screen.dart';
 import '../../jual/viewmodel/jual_cubit.dart';
 import '../../../data/repositories/product_repository.dart';
+import '../../../data/repositories/user_product_repository.dart';
+import '../../../data/services/image_picker_service.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -38,7 +40,12 @@ class _MainShellState extends State<MainShell> {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _homeCubit),
-        BlocProvider(create: (_) => JualCubit()),
+        BlocProvider(
+          create: (ctx) => JualCubit(
+            repository: ctx.read<UserProductRepository>(),
+            imageService: ctx.read<ImagePickerService>(),
+          ),
+        ),
       ],
       child: Builder(
         builder: (context) {

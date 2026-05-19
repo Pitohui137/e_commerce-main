@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../data/models/product.dart';
 import '../../../data/repositories/product_repository.dart';
-import 'home_state.dart';
+import '../viewmodel/home_state.dart';
 
 const _fashionCategories = {'jewelery', "men's clothing", "women's clothing"};
 

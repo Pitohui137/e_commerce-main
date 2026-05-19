@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/models/product.dart';
-import '../data/repositories/product_repository.dart';
+import '../data/models/user_product.dart';
+import '../data/repositories/user_product_repository.dart';
+import '../data/services/image_picker_service.dart';
 import '../features/cart/view/cart_screen.dart';
-import '../features/home/viewmodel/home_cubit.dart';
 import '../features/insert_product/view/insert_product_page.dart';
 import '../features/insert_product/viewmodel/insert_product_cubit.dart';
 import '../features/product_detail/view/product_detail_screen.dart';
@@ -18,9 +19,7 @@ class AppRoutes {
 }
 
 class AppRouter {
-  AppRouter(this._productRepository);
-
-  final ProductRepository _productRepository;
+  const AppRouter();
 
   Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -46,10 +45,13 @@ class AppRouter {
         );
 
       case AppRoutes.insertProduct:
-        return MaterialPageRoute<Product?>(
+        return MaterialPageRoute<UserProduct>(
           settings: settings,
-          builder: (_) => BlocProvider(
-            create: (_) => InsertProductCubit(_productRepository),
+          builder: (ctx) => BlocProvider(
+            create: (_) => InsertProductCubit(
+              repository: ctx.read<UserProductRepository>(),
+              imageService: ctx.read<ImagePickerService>(),
+            ),
             child: const InsertProductPage(),
           ),
         );

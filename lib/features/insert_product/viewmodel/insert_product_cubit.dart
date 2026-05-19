@@ -1,52 +1,72 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../data/repositories/product_repository.dart';
+import '../../../data/models/picked_image.dart';
+import '../../../data/repositories/user_product_repository.dart';
+import '../../../data/services/image_picker_service.dart';
 import 'insert_product_state.dart';
 
 class InsertProductCubit extends Cubit<InsertProductState> {
-  InsertProductCubit(this._repository) : super(const InsertProductIdle());
+  InsertProductCubit({
+    required this.repository,
+    required this.imageService,
+  }) : super(const InsertProductIdle());
 
-  final ProductRepository _repository;
+  final UserProductRepository repository;
+  final ImagePickerService imageService;
+
+  PickedImage? pickedImage;
+
+  Future<PickedImage?> pickImage(ImageSource source) async {
+    final image = await imageService.pickImage(source);
+    if (image != null) pickedImage = image;
+    return image;
+  }
 
   Future<void> submit({
     required String title,
     required String priceText,
     required String description,
-    required String image,
     required String category,
+    PickedImage? image,
   }) async {
-    final price = double.tryParse(priceText.trim());
     if (title.trim().isEmpty) {
-      emit(const InsertProductFailure('Please enter a title.'));
+      emit(const InsertProductFailure('Judul wajib diisi.'));
       return;
     }
+    final price = double.tryParse(priceText.trim());
     if (price == null || price < 0) {
-      emit(const InsertProductFailure('Please enter a valid price.'));
+      emit(const InsertProductFailure('Harga tidak valid.'));
       return;
     }
     if (description.trim().isEmpty) {
-      emit(const InsertProductFailure('Please enter a description.'));
-      return;
-    }
-    if (image.trim().isEmpty) {
-      emit(const InsertProductFailure('Please enter an image URL.'));
+      emit(const InsertProductFailure('Deskripsi wajib diisi.'));
       return;
     }
     if (category.trim().isEmpty) {
-      emit(const InsertProductFailure('Please choose or enter a category.'));
+      emit(const InsertProductFailure('Pilih kategori.'));
       return;
     }
+    final picked = image ?? pickedImage;
+    if (picked == null) {
+      emit(const InsertProductFailure('Pilih foto produk terlebih dahulu.'));
+      return;
+    }
+    pickedImage = picked;
 
     emit(const InsertProductSubmitting());
     try {
-      final product = await _repository.createProduct(
+      final imageUrl = await imageService.uploadImage(picked);
+
+      final product = await repository.create(
         title: title.trim(),
         price: price,
         description: description.trim(),
-        image: image.trim(),
         category: category.trim(),
+        imageUrl: imageUrl,
       );
+
       emit(InsertProductSuccess(product));
     } on AppException catch (e) {
       emit(InsertProductFailure(e.message));
@@ -55,5 +75,8 @@ class InsertProductCubit extends Cubit<InsertProductState> {
     }
   }
 
-  void reset() => emit(const InsertProductIdle());
+  void reset() {
+    pickedImage = null;
+    emit(const InsertProductIdle());
+  }
 }

@@ -5,6 +5,8 @@ import '../data/repositories/auth_repository.dart';
 import '../data/repositories/cart_repository.dart';
 import '../data/repositories/customer_repository.dart';
 import '../data/repositories/product_repository.dart';
+import '../data/repositories/user_product_repository.dart';
+import '../data/services/image_picker_service.dart';
 import '../features/auth/view/auth_gate.dart';
 import '../features/auth/viewmodel/auth_cubit.dart';
 import '../features/cart/viewmodel/cart_cubit.dart';
@@ -19,16 +21,20 @@ class ECommerceApp extends StatelessWidget {
     required this.cartRepository,
     required this.authRepository,
     required this.customerRepository,
+    required this.userProductRepository,
+    required this.imagePickerService,
   });
 
   final ProductRepository productRepository;
   final CartRepository cartRepository;
   final AuthRepository authRepository;
   final CustomerRepository customerRepository;
+  final UserProductRepository userProductRepository;
+  final ImagePickerService imagePickerService;
 
   @override
   Widget build(BuildContext context) {
-    final router = AppRouter(productRepository);
+    const router = AppRouter();
 
     return MultiRepositoryProvider(
       providers: [
@@ -36,6 +42,8 @@ class ECommerceApp extends StatelessWidget {
         RepositoryProvider.value(value: cartRepository),
         RepositoryProvider.value(value: authRepository),
         RepositoryProvider.value(value: customerRepository),
+        RepositoryProvider.value(value: userProductRepository),
+        RepositoryProvider.value(value: imagePickerService),
       ],
       child: MultiBlocProvider(
         providers: [
