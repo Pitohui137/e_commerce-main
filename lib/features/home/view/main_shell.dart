@@ -26,7 +26,10 @@ class _MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
-    _homeCubit = HomeCubit(context.read<ProductRepository>())..load();
+    _homeCubit = HomeCubit(
+      context.read<ProductRepository>(),
+      context.read<UserProductRepository>(), // <-- tambahkan ini
+    )..load();
   }
 
   @override
@@ -89,7 +92,6 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
-/// Wrapper untuk HomeScreen tanpa membuat HomeCubit baru
 class _HomeTab extends StatelessWidget {
   const _HomeTab();
 
