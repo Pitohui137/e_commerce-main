@@ -1,19 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/app_router.dart';
+import '../../../data/repositories/order_repository.dart';
 import '../../auth/viewmodel/auth_cubit.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.email});
 
   final String email;
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  int _pendingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPendingCount();
+  }
+
+  Future<void> _loadPendingCount() async {
+    try {
+      final pending =
+          await context.read<OrderRepository>().fetchInDelivery();
+      if (mounted) setState(() => _pendingCount = pending.length);
+    } catch (_) {}
+  }
+
+  Future<void> _openOrderHistory(BuildContext context) async {
+    final hasPending =
+        await context.read<OrderRepository>().hasPendingDelivery();
+    if (!context.mounted) return;
+
+    if (hasPending) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Konfirmasi pesanan dulu',
+            style: TextStyle(fontWeight: FontWeight.w800),
+          ),
+          content: const Text(
+            'Masih ada pesanan berstatus Proses pengantaran. '
+            'Tekan "Pesanan Diterima" di Pesanan Aktif sebelum membuka Riwayat Pembelian.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Tutup'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.pushNamed(context, AppRoutes.activeOrders)
+                    .then((_) => _loadPendingCount());
+              },
+              child: const Text('Ke Pesanan Aktif'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    await Navigator.pushNamed(context, AppRoutes.orderHistory);
+    _loadPendingCount();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final initials = email.isEmpty
+    final initials = widget.email.isEmpty
         ? '?'
-        : email[0].toUpperCase();
+        : widget.email[0].toUpperCase();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F7),
@@ -47,7 +112,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  email,
+                  widget.email,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -83,12 +148,37 @@ class ProfileScreen extends StatelessWidget {
               _InfoRow(
                 icon: Icons.alternate_email_rounded,
                 label: 'Email',
-                value: email,
+                value: widget.email,
               ),
               _InfoRow(
                 icon: Icons.shield_outlined,
                 label: 'Provider',
                 value: 'Email / Password',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          _ActionCard(
+            items: [
+              _ActionRow(
+                icon: Icons.local_shipping_outlined,
+                label: 'Pesanan Aktif',
+                subtitle: _pendingCount > 0
+                    ? '$_pendingCount pesanan · Proses pengantaran'
+                    : 'Konfirmasi pesanan yang sedang dikirim',
+                badge: _pendingCount > 0 ? '$_pendingCount' : null,
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.activeOrders)
+                      .then((_) => _loadPendingCount());
+                },
+              ),
+              _ActionRow(
+                icon: Icons.receipt_long_outlined,
+                label: 'Riwayat Pembelian',
+                subtitle: 'Pesanan yang sudah dikonfirmasi diterima',
+                onTap: () => _openOrderHistory(context),
               ),
             ],
           ),
@@ -258,6 +348,124 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  const _ActionCard({required this.items});
+
+  final List<_ActionRow> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF0EFED)),
+      ),
+      child: Column(
+        children: items
+            .asMap()
+            .entries
+            .map((e) => Column(
+                  children: [
+                    e.value,
+                    if (e.key < items.length - 1)
+                      const Divider(height: 1, indent: 52),
+                  ],
+                ))
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  const _ActionRow({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+    this.badge,
+  });
+
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+  final String? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 18, color: const Color(0xFF555555)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF999999),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (badge != null) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE65100),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    badge!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+              const Icon(Icons.chevron_right,
+                  size: 20, color: Color(0xFFCCCCCC)),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -18,7 +18,26 @@ class UserProductRepository {
     return user.id;
   }
 
-  Future<List<UserProduct>> fetchAll() async {
+  /// Semua produk dari semua user — untuk katalog tab Produk.
+  Future<List<UserProduct>> fetchAllForCatalog() async {
+    try {
+      final data = await _supabase
+          .from(_table)
+          .select()
+          .order('created_at', ascending: false);
+
+      return (data as List)
+          .map((e) => UserProduct.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on PostgrestException catch (e) {
+      throw AppException(e.message);
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  /// Hanya produk milik user yang login — untuk tab Jual.
+  Future<List<UserProduct>> fetchMine() async {
     try {
       final data = await _supabase
           .from(_table)

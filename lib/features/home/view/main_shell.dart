@@ -66,7 +66,10 @@ class _MainShellState extends State<MainShell> {
               ),
               child: BottomNavigationBar(
                 currentIndex: _tab,
-                onTap: (i) => setState(() => _tab = i),
+                onTap: (i) {
+                  setState(() => _tab = i);
+                  if (i == 0) _homeCubit.load();
+                },
                 backgroundColor: Colors.white,
                 elevation: 0,
                 items: const [

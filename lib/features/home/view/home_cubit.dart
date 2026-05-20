@@ -23,7 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final categories = await _repository.fetchCategories();
       final apiProducts = await _repository.fetchProducts();
-      final userProducts = await _userProductRepository.fetchAll();
+      final userProducts = await _userProductRepository.fetchAllForCatalog();
 
       final fashionCategories =
           categories.where((c) => _fashionCategories.contains(c)).toList();
@@ -61,7 +61,7 @@ class HomeCubit extends Cubit<HomeState> {
 
       final apiProducts =
           await _repository.fetchProductsByCategory(category);
-      final userProducts = await _userProductRepository.fetchAll();
+      final userProducts = await _userProductRepository.fetchAllForCatalog();
 
       final userDisplayProducts = userProducts
           .where((up) => up.category == category)

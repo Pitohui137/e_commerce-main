@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/widgets/async_error_view.dart';
+import '../../../core/widgets/price_label.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../data/models/user_product.dart';
 import '../../home/view/home_cubit.dart';
@@ -221,8 +222,8 @@ class _ProductTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '\$${product.price.toStringAsFixed(2)}',
+                  PriceLabel(
+                    product.price,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,

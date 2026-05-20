@@ -184,11 +184,11 @@ class _InsertProductPageState extends State<InsertProductPage> {
                   // ── Price ──────────────────────────────────────────
                   _FormField(
                     controller: _priceCtrl,
-                    label: 'Harga (USD)',
-                    icon: Icons.attach_money_rounded,
-                    type: const TextInputType.numberWithOptions(decimal: true),
+                    label: 'Harga (Rp)',
+                    icon: Icons.payments_outlined,
+                    type: TextInputType.number,
                     action: TextInputAction.next,
-                    hint: 'contoh: 29.99',
+                    hint: 'contoh: 150000',
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return 'Wajib diisi';
                       if (double.tryParse(v.trim()) == null) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/currency_formatter.dart';
+
 class PriceLabel extends StatelessWidget {
   const PriceLabel(
     this.price, {
@@ -14,7 +16,7 @@ class PriceLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Text(
-      '\$${price.toStringAsFixed(2)}',
+      CurrencyFormatter.format(price),
       style: style ??
           theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,

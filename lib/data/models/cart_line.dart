@@ -19,7 +19,7 @@ class CartLine extends Equatable {
 
   factory CartLine.fromJson(Map<String, dynamic> json) {
     return CartLine(
-      product: Product.fromJson(json['product'] as Map<String, dynamic>),
+      product: Product.fromStoredJson(json['product'] as Map<String, dynamic>),
       quantity: json['quantity'] as int,
     );
   }

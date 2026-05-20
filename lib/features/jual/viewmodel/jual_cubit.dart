@@ -25,7 +25,7 @@ class JualCubit extends Cubit<JualState> {
   Future<void> load() async {
     emit(const JualLoading());
     try {
-      final products = await repository.fetchAll();
+      final products = await repository.fetchMine();
       emit(JualLoaded(products));
     } on AppException catch (e) {
       emit(JualError(e.message));

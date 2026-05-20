@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/app_router.dart';
 import '../../../core/widgets/price_label.dart';
 import '../viewmodel/cart_cubit.dart';
 import '../viewmodel/cart_state.dart';
@@ -14,7 +15,7 @@ class CartScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your cart'),
+        title: const Text('Keranjang'),
       ),
       body: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -32,12 +33,12 @@ class CartScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Your cart is empty',
+                      'Keranjang kosong',
                       style: theme.textTheme.titleLarge,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Browse products and add something you like.',
+                      'Jelajahi produk dan tambahkan ke keranjang.',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -138,7 +139,7 @@ class CartScreen extends StatelessWidget {
                                 TextButton(
                                   onPressed: () =>
                                       context.read<CartCubit>().remove(p.id),
-                                  child: const Text('Remove'),
+                                  child: const Text('Hapus'),
                                 ),
                               ],
                             ),
@@ -156,20 +157,39 @@ class CartScreen extends StatelessWidget {
                   top: false,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'Total',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            PriceLabel(
+                              state.grandTotal,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          '\$${state.grandTotal.toStringAsFixed(2)}',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w800,
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: FilledButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.checkout,
+                              );
+                            },
+                            child: const Text('Checkout'),
                           ),
                         ),
                       ],

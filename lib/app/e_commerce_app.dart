@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/repositories/auth_repository.dart';
 import '../data/repositories/cart_repository.dart';
 import '../data/repositories/customer_repository.dart';
+import '../data/repositories/order_repository.dart';
+import '../data/repositories/shipping_address_repository.dart';
 import '../data/repositories/product_repository.dart';
 import '../data/repositories/user_product_repository.dart';
 import '../data/services/image_picker_service.dart';
@@ -19,6 +21,8 @@ class ECommerceApp extends StatelessWidget {
     super.key,
     required this.productRepository,
     required this.cartRepository,
+    required this.shippingAddressRepository,
+    required this.orderRepository,
     required this.authRepository,
     required this.customerRepository,
     required this.userProductRepository,
@@ -27,6 +31,8 @@ class ECommerceApp extends StatelessWidget {
 
   final ProductRepository productRepository;
   final CartRepository cartRepository;
+  final ShippingAddressRepository shippingAddressRepository;
+  final OrderRepository orderRepository;
   final AuthRepository authRepository;
   final CustomerRepository customerRepository;
   final UserProductRepository userProductRepository;
@@ -40,6 +46,8 @@ class ECommerceApp extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: productRepository),
         RepositoryProvider.value(value: cartRepository),
+        RepositoryProvider.value(value: shippingAddressRepository),
+        RepositoryProvider.value(value: orderRepository),
         RepositoryProvider.value(value: authRepository),
         RepositoryProvider.value(value: customerRepository),
         RepositoryProvider.value(value: userProductRepository),

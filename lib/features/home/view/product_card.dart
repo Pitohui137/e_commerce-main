@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/price_label.dart';
 import '../../../data/models/product.dart';
 
 class ProductCard extends StatelessWidget {
@@ -168,8 +169,8 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      '\$${product.price.toStringAsFixed(2)}',
+                    PriceLabel(
+                      product.price,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
