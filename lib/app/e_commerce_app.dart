@@ -60,7 +60,7 @@ class ECommerceApp extends StatelessWidget {
           BlocProvider(create: (_) => CustomerCubit(customerRepository)),
         ],
         child: MaterialApp(
-          title: 'Vogue Shop',
+          title: 'Vernique',
           debugShowCheckedModeBanner: false,
           theme: buildAppTheme(),
           // AuthGate decides whether to show login or the main app

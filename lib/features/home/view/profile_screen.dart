@@ -224,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // App version
           Center(
             child: Text(
-              'Vogue Shop v1.0.0',
+              'Vernique v1.0.0',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[400],

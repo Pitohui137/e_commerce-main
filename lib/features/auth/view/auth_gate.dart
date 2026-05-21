@@ -37,7 +37,7 @@ class _SplashView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'VOGUE',
+              'VERNIQUE',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,

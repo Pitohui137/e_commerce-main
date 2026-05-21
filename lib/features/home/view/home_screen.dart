@@ -35,7 +35,6 @@ class _HomeBodyState extends State<_HomeBody> {
   @override
   void initState() {
     super.initState();
-    // Load data jika belum ada
     final state = context.read<HomeCubit>().state;
     if (state is HomeInitial) {
       context.read<HomeCubit>().load();
@@ -70,7 +69,7 @@ class _HomeBodyState extends State<_HomeBody> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'VOGUE SHOP',
+                      'VERNIQUE',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,

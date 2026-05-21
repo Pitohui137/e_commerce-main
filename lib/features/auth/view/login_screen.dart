@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           const SizedBox(height: 16),
                           const Text(
-                            'VOGUE SHOP',
+                            'VERNIQUE',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 26,
