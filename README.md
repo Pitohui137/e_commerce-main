@@ -179,6 +179,7 @@ Menyimpan produk yang dijual oleh pengguna.
 ## 👤 Informasi Pengembang
 
 | | |
+|---|---|
 | **Nama** | Abyan Farhan |
 | **Mata Kuliah** | Pemrograman Mobile |
 | **Semester 6** | Kelas MA1 |
