@@ -160,11 +160,11 @@ Menyimpan produk yang dijual oleh pengguna.
 
 | Halaman Login | Halaman Home | Halaman Checkout |
 |:---:|:---:|:---:|
-| *!(image.png)* | *!(image-1.png)* | *!(image-2.png)* |
+| *!(imgreadme/image.png)* | *!(imgreadme/image-1.png)* | *!(imgreadme/image-2.png)* |
 
 | Keranjang | Pesanan Aktif | Jual Produk |
 |:---:|:---:|:---:|
-| *!(image-3.png)* | *!(image-4.png)* | *!(image-5.png)* |
+| *!(imgreadme/image-3.png)* | *!(imgreadme/image-4.png)* | *!(imgreadme/image-5.png)* |
 
 ---
 
