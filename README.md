@@ -160,11 +160,11 @@ Menyimpan produk yang dijual oleh pengguna.
 
 | Halaman Login | Halaman Home | Halaman Checkout |
 |:---:|:---:|:---:|
-| *(tambahkan screenshot)* | *(tambahkan screenshot)* | *(tambahkan screenshot)* |
+| *![alt text](image.png)* | *![alt text](image-1.png)* | *![alt text](image-2.png)* |
 
 | Keranjang | Pesanan Aktif | Jual Produk |
 |:---:|:---:|:---:|
-| *(tambahkan screenshot)* | *(tambahkan screenshot)* | *(tambahkan screenshot)* |
+| *![alt text](image-3.png)* | *![alt text](image-4.png)* | *![alt text](image-5.png)* |
 
 ---
 
@@ -178,11 +178,11 @@ Menyimpan produk yang dijual oleh pengguna.
 
 ## 👤 Informasi Pengembang
 
-| | |
 |---|---|
 | **Nama** | Abyan Farhan |
 | **Mata Kuliah** | Pemrograman Mobile |
-| **Semester** | 6 Kelas MA1 |
+| **Semester 6** | Kelas MA1 |
+| **Kampus** | ITB Swadharma |
 
 ---
 
