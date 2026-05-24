@@ -1,31 +1,31 @@
-# 🛍️ Vernique — Aplikasi E-Commerce Fashion Mobile
+# Vernique — Aplikasi E-Commerce Fashion Mobile
 
 > Tugas UTS Mata Kuliah Pemrograman Mobile  
 > **Abyan Farhan**
 
 ---
 
-## 📱 Tentang Aplikasi
+## Tentang Aplikasi
 
 **Vernique** adalah aplikasi mobile e-commerce fashion berbasis Flutter yang memungkinkan pengguna berperan sebagai pembeli sekaligus penjual. Katalog produk diambil dari [FakeStore API](https://fakestoreapi.com) dan dikombinasikan dengan produk yang diunggah langsung oleh pengguna melalui Supabase.
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 | Fitur | Keterangan |
 |---|---|
-| 🔐 Autentikasi | Registrasi & login dengan email/password via Supabase Auth |
-| 🛒 Katalog Produk | Grid produk fashion dengan filter kategori & pencarian real-time |
-| 🛍️ Keranjang Belanja | Tambah, ubah kuantitas, hapus produk — tersimpan secara lokal |
-| 💳 Checkout | Form alamat pengiriman + pilihan metode pembayaran (Bank, GoPay, OVO, DANA, COD) |
-| 📦 Manajemen Pesanan | Pantau pesanan aktif & konfirmasi penerimaan barang |
-| 📜 Riwayat Pembelian | Riwayat pesanan yang sudah dikonfirmasi diterima |
-| 🏪 Jual Produk | Upload foto produk dari kamera/galeri, langsung tampil di katalog publik |
+| Autentikasi | Registrasi & login dengan email/password via Supabase Auth |
+| Katalog Produk | Grid produk fashion dengan filter kategori & pencarian real-time |
+| Keranjang Belanja | Tambah, ubah kuantitas, hapus produk — tersimpan secara lokal |
+| Checkout | Form alamat pengiriman + pilihan metode pembayaran (Bank, GoPay, OVO, DANA, COD) |
+| Manajemen Pesanan | Pantau pesanan aktif & konfirmasi penerimaan barang |
+| Riwayat Pembelian | Riwayat pesanan yang sudah dikonfirmasi diterima |
+| Jual Produk | Upload foto produk dari kamera/galeri, langsung tampil di katalog publik |
 
 ---
 
-## 🏗️ Arsitektur
+## Arsitektur
 
 Aplikasi menggunakan pola **BLoC/Cubit** dengan pemisahan layer yang jelas:
 
@@ -63,7 +63,7 @@ lib/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Teknologi | Versi | Kegunaan |
 |---|---|---|
@@ -80,7 +80,7 @@ lib/
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### 1. Clone repository
 
@@ -120,7 +120,7 @@ flutter run
 
 ---
 
-## 🗄️ Skema Database Supabase
+## Skema Database Supabase
 
 ### Tabel `purchase_history`
 Menyimpan data pesanan setiap pengguna.
@@ -156,19 +156,34 @@ Menyimpan produk yang dijual oleh pengguna.
 
 ---
 
-## 📸 Screenshot Aplikasi
+## Screenshot Aplikasi
 
-| Halaman Login | Halaman Home | Halaman Checkout |
-|:---:|:---:|:---:|
-| ![Login](lib/imgreadme/image.png) | ![Home](lib/imgreadme/image-1.png) | ![Checkout](lib/imgreadme/image-2.png) |
-
-| Keranjang | Pesanan Aktif | Jual Produk |
-|:---:|:---:|:---:|
-| ![Keranjang](lib/imgreadme/image-3.png) | ![Pesanan Aktif](lib/imgreadme/image-4.png) | ![Jual](lib/imgreadme/image-5.png) |
+<table>
+  <tr>
+    <td align="center"><b>Halaman Login</b></td>
+    <td align="center"><b>Halaman Home</b></td>
+    <td align="center"><b>Halaman Checkout</b></td>
+  </tr>
+  <tr>
+    <td><img src="lib/imgreadme/image.png" width="200"/></td>
+    <td><img src="lib/imgreadme/image-1.png" width="200"/></td>
+    <td><img src="lib/imgreadme/image-2.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Keranjang</b></td>
+    <td align="center"><b>Pesanan Aktif</b></td>
+    <td align="center"><b>Jual Produk</b></td>
+  </tr>
+  <tr>
+    <td><img src="lib/imgreadme/image-3.png" width="200"/></td>
+    <td><img src="lib/imgreadme/image-4.png" width="200"/></td>
+    <td><img src="lib/imgreadme/image-5.png" width="200"/></td>
+  </tr>
+</table>
 
 ---
 
-## ⚠️ Catatan Penting
+## Catatan Penting
 
 - Harga produk dari FakeStore API menggunakan **USD**, dikonversi otomatis ke **IDR** dengan kurs `1 USD = Rp 16.000`
 - Ongkir menggunakan biaya flat **Rp 15.000** untuk simulasi
@@ -176,7 +191,7 @@ Menyimpan produk yang dijual oleh pengguna.
 
 ---
 
-## 👤 Informasi Pengembang
+## Informasi Pengembang
 
 | | |
 |---|---|
@@ -187,6 +202,6 @@ Menyimpan produk yang dijual oleh pengguna.
 
 ---
 
-## 📄 Lisensi
+## Lisensi
 
 Proyek ini dibuat untuk keperluan akademik (Tugas UTS). Tidak untuk digunakan secara komersial.
