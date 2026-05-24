@@ -160,11 +160,11 @@ Menyimpan produk yang dijual oleh pengguna.
 
 | Halaman Login | Halaman Home | Halaman Checkout |
 |:---:|:---:|:---:|
-| *!(lib/imgreadme/image.png)* | *!(lib/imgreadme/image-1.png)* | *!(lib/imgreadme/image-2.png)* |
+| ![Login](lib/imgreadme/image.png) | ![Home](lib/imgreadme/image-1.png) | ![Checkout](lib/imgreadme/image-2.png) |
 
 | Keranjang | Pesanan Aktif | Jual Produk |
 |:---:|:---:|:---:|
-| *!(lib/imgreadme/image-3.png)* | *!(lib/imgreadme/image-4.png)* | *!(lib/imgreadme/image-5.png)* |
+| ![Keranjang](lib/imgreadme/image-3.png) | ![Pesanan Aktif](lib/imgreadme/image-4.png) | ![Jual](lib/imgreadme/image-5.png) |
 
 ---
 
